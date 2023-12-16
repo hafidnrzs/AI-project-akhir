@@ -76,3 +76,4 @@ if __name__ == "__main__":
     # Test the classifier on the test image
     prediction = tester.test_classifier(TEST_IMAGE_PATH)
     print("Prediction:", prediction)
+#coba apakah bisa ke update
