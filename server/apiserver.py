@@ -5,14 +5,11 @@ import cv2
 import sys
 from config import folder_path, IP_ADDRESS, PORT_NUMBER
 sys.path.append(folder_path)
-sys.path.append(folder_path + '/server')
-sys.path.append(folder_path + '/backend_classification')
-
 from backend_classification.test_classification import ImageClassifierTester
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = folder_path + '/server/uploads_images'  # Sesuaikan dengan lokasi penyimpanan Anda
-app.config['PREPROCESS_FOLDER'] = folder_path + '/server/preprocess_images'  # Folder untuk hasil pengolahan citra
+app.config['UPLOAD_FOLDER'] = os.path.join(folder_path, 'server/uploads_images')  # Sesuaikan dengan lokasi penyimpanan Anda
+app.config['PREPROCESS_FOLDER'] = os.path.join(folder_path, 'server/preprocess_images') # Folder untuk hasil pengolahan citra
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -38,8 +35,8 @@ def upload_file():
         return jsonify(prediction)  # Mengirimkan hasil prediksi ke klien dalam format JSON
 
 def processed_image(file_path):
-    MODEL_DIR = 'backend_classification/model'
-    FEATURE_DIR = 'backend_classification/fitur'
+    MODEL_DIR = os.path.join(folder_path, 'backend_classification/model')
+    FEATURE_DIR = os.path.join(folder_path, 'backend_classification/fitur')
     FEATURE_TYPE = 'histogram'  # choose from 'histogram', 'glcm', or 'histogram_glcm'
     CLASSIFIER_TYPE = "mlp"  # "mlp", "naive_bayes"
 

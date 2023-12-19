@@ -1,3 +1,5 @@
 __pycache__/
-preprocess_images/
-uploads_images/
+server/preprocess_images/*
+!server/preprocess_images/*.md
+server/uploads_images/*
+!server/uploads_images/*.md

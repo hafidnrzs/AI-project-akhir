@@ -39,32 +39,37 @@ class _ImageUploaderState extends State<ImageUploader> {
   }
 
   Future uploadImage() async {
-    if (_image == null) {
-      print('No image selected.');
-      return;
-    }
+    try {
+      if (_image == null) {
+        print('No image selected.');
+        return;
+      }
 
-    setState(() {
-      isUploading = true;
-    });
-
-    final uri = Uri.parse("http://192.168.154.194:5000/upload");
-    var request = http.MultipartRequest('POST', uri);
-    request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
-    var response = await request.send();
-    if (response.statusCode == 200) {
-      print('Image uploaded');
-      String responseBody = await response.stream.bytesToString();
       setState(() {
-        responseMessage = responseBody;
+        isUploading = true;
       });
-    } else {
-      print('Image not uploaded');
-    }
 
-    setState(() {
-      isUploading = false;
-    });
+      final uri = Uri.parse("http://192.168.1.4:5000/upload");
+      var request = http.MultipartRequest('POST', uri);
+      request.files
+          .add(await http.MultipartFile.fromPath('image', _image!.path));
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        print('Image uploaded');
+        String responseBody = await response.stream.bytesToString();
+        setState(() {
+          responseMessage = responseBody;
+        });
+      } else {
+        print('Image not uploaded');
+      }
+    } catch (error) {
+      print('Error uploading image: $error');
+    } finally {
+      setState(() {
+        isUploading = false;
+      });
+    }
   }
 
   void resetImage() {

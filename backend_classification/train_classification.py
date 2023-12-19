@@ -8,6 +8,9 @@ from sklearn.metrics import classification_report
 import pickle
 import warnings
 
+import sys
+current_folder = os.path.dirname(__file__) # ./backend_classification
+sys.path.append(current_folder)
 from FeatureExtractor_GLCM import GLCMFeatureExtractor
 warnings.filterwarnings("ignore")
 
@@ -91,9 +94,9 @@ class ImageClassifier:
 
 
 if __name__ == "__main__":
-    DATASET_DIR = 'backend_classification/dataset/Car_lite'
-    MODEL_DIR = 'backend_classification/model'
-    FEATURE_DIR = 'backend_classification/fitur'
+    DATASET_DIR = os.path.join(current_folder, 'dataset/Car_lite')
+    MODEL_DIR = os.path.join(current_folder, 'model')
+    FEATURE_DIR = os.path.join(current_folder, 'fitur')
     FEATURE_TYPE = 'histogram'  # choose from 'histogram', 'glcm', or 'histogram_glcm'
     CLASSIFIER_TYPE = "mlp" # "mlp", "naive_bayes"
 

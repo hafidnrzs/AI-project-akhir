@@ -3,6 +3,9 @@ import cv2
 import numpy as np
 import pickle
 
+import sys
+current_folder = os.path.dirname(__file__) # ./backend_classification
+sys.path.append(current_folder)
 from FeatureExtractor_GLCM import GLCMFeatureExtractor
 
 class ImageClassifierTester:
@@ -59,12 +62,12 @@ class ImageClassifierTester:
 
 
 if __name__ == "__main__":
-    MODEL_DIR = 'backend_classification/model'
-    FEATURE_DIR = 'backend_classification/fitur'
+    MODEL_DIR = os.path.join(current_folder, 'model')
+    FEATURE_DIR = os.path.join(current_folder, 'fitur')
     FEATURE_TYPE = 'histogram'  # choose from 'histogram', 'glcm', or 'histogram_glcm'
     CLASSIFIER_TYPE = "mlp"  # "mlp", "naive_bayes"
 
-    TEST_IMAGE_PATH = 'backend_classification/dataset/Car_lite/Convertible/convertible_0_09062020_145449.jpg'
+    TEST_IMAGE_PATH = os.path.join(current_folder, 'dataset/Car_lite/Mitsubishi/Mitsubishi_Eclipse Cross_2019_23_16_150_15_4_71_66_173_26_FWD_5_4_SUV_Tnj.jpg')
 
     # Create an instance of ImageClassifierTester
     tester = ImageClassifierTester(MODEL_DIR, FEATURE_DIR, FEATURE_TYPE)
