@@ -11,8 +11,8 @@ sys.path.append(folder_path + '/backend_classification')
 from backend_classification.test_classification import ImageClassifierTester
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'D:/Kuliah/Semester-3/AI/Code_penerapan_AI/server/uploads_images'  # Sesuaikan dengan lokasi penyimpanan Anda
-app.config['PREPROCESS_FOLDER'] = 'D:/Kuliah/Semester-3/AI/Code_penerapan_AI/server/preprocess_images'  # Folder untuk hasil pengolahan citra
+app.config['UPLOAD_FOLDER'] = folder_path + '/server/uploads_images'  # Sesuaikan dengan lokasi penyimpanan Anda
+app.config['PREPROCESS_FOLDER'] = folder_path + '/server/preprocess_images'  # Folder untuk hasil pengolahan citra
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
