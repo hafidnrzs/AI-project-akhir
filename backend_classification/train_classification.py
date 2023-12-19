@@ -95,7 +95,7 @@ if __name__ == "__main__":
     MODEL_DIR = 'backend_classification/model'
     FEATURE_DIR = 'backend_classification/fitur'
     FEATURE_TYPE = 'histogram'  # choose from 'histogram', 'glcm', or 'histogram_glcm'
-    CLASSIFIER_TYPE = "naive_bayes" # "mlp", "naive_bayes"
+    CLASSIFIER_TYPE = "mlp" # "mlp", "naive_bayes"
 
     # Create an instance of ImageClassifier and train the chosen classifier
     classifier = ImageClassifier(DATASET_DIR, MODEL_DIR, FEATURE_DIR, FEATURE_TYPE)
