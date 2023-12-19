@@ -3,8 +3,6 @@ import cv2
 import numpy as np
 import pickle
 
-import sys
-sys.path.append('D:/Kuliah/Semester-3/AI/Code_penerapan_AI/backend_classification')
 from FeatureExtractor_GLCM import GLCMFeatureExtractor
 
 class ImageClassifierTester:

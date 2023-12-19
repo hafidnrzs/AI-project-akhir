@@ -3,7 +3,10 @@ from werkzeug.utils import secure_filename
 import os
 import cv2
 import sys
-sys.path.append('D:/Kuliah/Semester-3/AI/Code_penerapan_AI')
+from config import folder_path, IP_ADDRESS, PORT_NUMBER
+sys.path.append(folder_path)
+sys.path.append(folder_path + '/server')
+sys.path.append(folder_path + '/backend_classification')
 
 from backend_classification.test_classification import ImageClassifierTester
 
@@ -53,4 +56,4 @@ def processed_image(file_path):
     return prediction, features, image
 
 if __name__ == '__main__':
-    app.run(host='192.168.154.194', port=5000)
+    app.run(host=IP_ADDRESS, port=PORT_NUMBER)
