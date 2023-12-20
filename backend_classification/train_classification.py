@@ -7,6 +7,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import pickle
 import warnings
+from sklearn.model_selection import cross_val_score
+
+
 
 import sys
 current_folder = os.path.dirname(__file__) # ./backend_classification
@@ -63,7 +66,7 @@ class ImageClassifier:
         self.labels = np.array(self.labels)
 
     def train_mlp(self):
-        mlp = MLPClassifier(hidden_layer_sizes=(100,), max_iter=500)
+        mlp = MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000)  # Ubah parameter sesuai kebutuhan
         mlp.fit(self.data.reshape(len(self.data), -1), self.labels)
         return mlp
 
@@ -79,9 +82,24 @@ class ImageClassifier:
         classifier.fit(X_train.reshape(len(X_train), -1), y_train)
 
         y_pred = classifier.predict(X_test.reshape(len(X_test), -1))
+        from sklearn.metrics import accuracy_score
+
+        # Setelah Anda melakukan prediksi pada data pengujian
+        y_pred = classifier.predict(X_test.reshape(len(X_test), -1))
+
+        # Hitung dan cetak akurasi
+        accuracy = accuracy_score(y_test, y_pred)
+        print("Akurasi: {:.2f}%".format(accuracy * 100))
+
         print(classification_report(y_test, y_pred))
 
         self.classifier = classifier
+        # Di dalam metode train_classifier
+        scores = cross_val_score(classifier, self.data.reshape(len(self.data), -1), self.labels, cv=5)  # Ubah cv sesuai kebutuhan
+        print("Cross-Validation Scores:", scores)
+        print("Rata-rata Akurasi:", np.mean(scores))
+
+
 
     def save_classifier(self, classifier_type):
         np.save(os.path.join(self.feature_dir, 'data.npy'), self.data)
@@ -105,3 +123,5 @@ if __name__ == "__main__":
     classifier.load_data()
     classifier.train_classifier(CLASSIFIER_TYPE)
     classifier.save_classifier(CLASSIFIER_TYPE)
+
+

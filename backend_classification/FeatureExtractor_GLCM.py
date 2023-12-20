@@ -104,7 +104,7 @@ class GLCMFeatureExtractor:
         #print(self.labels_mean)
         
 if __name__ == "__main__":
-    image_path = "backend_classification\dataset\Car_lite\Convertible\convertible_0_09062020_145449.jpg"
+    image_path = "C:\SEMESTER 3\FOLDER MATERI SEM 3\KECERDASAN BUATAN\backend_classification\dataset\Car_lite\Mobil\Mitsubishi_Eclipse Cross_2019_23_16_150_15_4_71_66_173_26_FWD_5_4_SUV_Tnj.jpg"
     image = cv2.imread(image_path)
 
     feature_extractor = GLCMFeatureExtractor()
