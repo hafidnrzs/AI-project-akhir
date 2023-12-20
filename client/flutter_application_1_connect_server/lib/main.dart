@@ -49,7 +49,7 @@ class _ImageUploaderState extends State<ImageUploader> {
         isUploading = true;
       });
 
-      final uri = Uri.parse("http://192.168.1.4:5000/upload");
+      final uri = Uri.parse("http://192.168.1.9:5000/upload");
       var request = http.MultipartRequest('POST', uri);
       request.files
           .add(await http.MultipartFile.fromPath('image', _image!.path));
