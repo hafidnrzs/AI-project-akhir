@@ -67,8 +67,7 @@ if __name__ == "__main__":
     FEATURE_TYPE = 'histogram'  # choose from 'histogram', 'glcm', or 'histogram_glcm'
     CLASSIFIER_TYPE = "mlp"  # "mlp", "naive_bayes"
 
-    TEST_IMAGE_PATH = os.path.join(current_folder, 'C:\SEMESTER 3\FOLDER MATERI SEM 3\KECERDASAN BUATAN\backend_classification\dataset\Car_lite\Mobil\Mitsubishi_Eclipse Cross_2019_23_16_150_15_4_71_66_173_26_FWD_5_4_SUV_Tnj.jpg')
-
+    TEST_IMAGE_PATH = os.path.join(current_folder, 'dataset/Car_lite/Mobil/Volkswagen_Tiguan_2016_28_19_200_20_4_71_67_174_21_FWD_5_4_SUV_ont.jpg')
     # Create an instance of ImageClassifierTester
     tester = ImageClassifierTester(MODEL_DIR, FEATURE_DIR, FEATURE_TYPE)
     tester.load_data()

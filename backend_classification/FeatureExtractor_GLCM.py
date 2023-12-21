@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 from scipy import io
+import os
+current_folder = os.path.dirname(__file__) # ./backend_classification
 
 class GLCMFeatureExtractor:
     def __init__(self):  # image instead of F
@@ -104,7 +106,7 @@ class GLCMFeatureExtractor:
         #print(self.labels_mean)
         
 if __name__ == "__main__":
-    image_path = "C:\SEMESTER 3\FOLDER MATERI SEM 3\KECERDASAN BUATAN\backend_classification\dataset\Car_lite\Mobil\Mitsubishi_Eclipse Cross_2019_23_16_150_15_4_71_66_173_26_FWD_5_4_SUV_Tnj.jpg"
+    image_path = os.path.join(current_folder, "dataset/Car_lite/Mobil/Volkswagen_Tiguan_2016_28_19_200_20_4_71_67_174_21_FWD_5_4_SUV_ont.jpg")
     image = cv2.imread(image_path)
 
     feature_extractor = GLCMFeatureExtractor()
