@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,14 +9,31 @@ void main() async {
   runApp(const MyApp());
 }
 
+final ThemeData myTheme = ThemeData(
+  primaryColor: const Color(0xFF5D5FEF),
+  // scaffoldBackgroundColor: Colors.white,
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+        backgroundColor:
+            MaterialStateProperty.all<Color>(const Color(0xFF5D5FEF)),
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.white)),
+  ),
+);
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: myTheme.primaryColor,
+      statusBarBrightness: Brightness.light,
+    ));
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Car Classification',
-      home: ImageUploader(),
+      theme: myTheme,
+      home: const ImageUploader(),
     );
   }
 }
@@ -24,7 +42,7 @@ class ImageUploader extends StatefulWidget {
   const ImageUploader({super.key});
 
   @override
-  _ImageUploaderState createState() => _ImageUploaderState();
+  State<ImageUploader> createState() => _ImageUploaderState();
 }
 
 class _ImageUploaderState extends State<ImageUploader> {
@@ -33,71 +51,56 @@ class _ImageUploaderState extends State<ImageUploader> {
   bool getResult = false;
   String responseMessage = '';
 
-  Future captureImage() async {
+  Future<void> _setImage(ImageSource source) async {
     try {
-      final image = await ImagePicker().pickImage(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.rear,
-      );
+      final image = await ImagePicker().pickImage(source: source);
+
+      if (image == null) throw ("Tidak ada gambar terpilih.");
 
       setState(() {
-        if (image != null) {
-          _image = File(image.path);
-          responseMessage = '';
-        } else {
-          print('No image selected.');
-        }
+        _image = File(image.path);
+        responseMessage = '';
+        getResult = false;
       });
     } catch (e) {
-      print('Failed to pick image: $e');
+      throw ('Gagal memilih gambar: $e');
     }
   }
 
-  Future getImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future captureImage() async {
+    await _setImage(ImageSource.camera);
+  }
 
-      setState(() {
-        if (image != null) {
-          _image = File(image.path);
-          responseMessage = '';
-        } else {
-          print('No image selected.');
-        }
-      });
-    } catch (e) {
-      print('Failed to pick image: $e');
-    }
+  Future getImage() async {
+    await _setImage(ImageSource.gallery);
   }
 
   Future uploadImage() async {
     try {
-      if (_image == null) {
-        print('No image selected.');
-        return;
-      }
+      if (_image == null) throw ("Tidak ada gambar terpilih.");
 
       setState(() {
         isUploading = true;
       });
 
-      final uri = Uri.parse("http://192.168.1.19:5000/upload");
+      final uri = Uri.parse("http://192.168.1.9:5000/upload");
       var request = http.MultipartRequest('POST', uri);
       request.files
           .add(await http.MultipartFile.fromPath('image', _image!.path));
       var response = await request.send();
-      if (response.statusCode == 200) {
-        print('Image uploaded');
-        String responseBody = await response.stream.bytesToString();
-        setState(() {
-          responseMessage = json.decode(responseBody);
-          getResult = true;
-        });
-      } else {
-        print('Image not uploaded');
+
+      if (response.statusCode != 200) {
+        throw ("Tidak dapat terhubung dengan server.");
       }
+
+      print('Gambar terupload');
+      String responseBody = await response.stream.bytesToString();
+      setState(() {
+        responseMessage = json.decode(responseBody);
+        getResult = true;
+      });
     } catch (error) {
-      print('Error uploading image: $error');
+      print('Gagal mengupload gambar: $error');
     } finally {
       setState(() {
         isUploading = false;
@@ -119,11 +122,16 @@ class _ImageUploaderState extends State<ImageUploader> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Car Classification'),
+        title: const Text('Car Classification',
+            style: TextStyle(
+              color: Colors.white,
+            )),
+        backgroundColor: myTheme.primaryColor,
         actions: [
           IconButton(
             onPressed: resetImage,
             icon: const Icon(Icons.refresh),
+            color: Colors.white,
           ),
         ],
       ),
@@ -134,13 +142,12 @@ class _ImageUploaderState extends State<ImageUploader> {
               Container(
                 padding: const EdgeInsets.only(bottom: 16),
                 height: 300,
-                child: Center(
-                    child: _image != null
-                        ? Image.file(
-                            _image!,
-                            fit: BoxFit.contain,
-                          )
-                        : const Text('Tidak ada gambar terpilih.')),
+                child: _image != null
+                    ? Image.file(
+                        _image!,
+                        fit: BoxFit.fitWidth,
+                      )
+                    : const Center(child: Text('Tidak ada gambar terpilih.')),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -180,23 +187,24 @@ class _ImageUploaderState extends State<ImageUploader> {
               bottom: 0,
               child: Container(
                 height: 150,
-                padding: EdgeInsets.only(top: 24),
+                padding: const EdgeInsets.only(top: 24),
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                    color: Colors.purple[50],
-                    borderRadius: BorderRadius.only(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24),
                     )),
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       'Hasil klasifikasi',
-                      style: TextStyle(fontSize: 16.0),
+                      style: TextStyle(fontSize: 16.0, color: Colors.white),
                     ),
                     Text(
                       responseMessage,
-                      style: TextStyle(fontSize: 32.0),
+                      style:
+                          const TextStyle(fontSize: 32.0, color: Colors.white),
                     ),
                   ],
                 ),
