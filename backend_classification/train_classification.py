@@ -12,7 +12,7 @@ from sklearn.model_selection import cross_val_score
 
 
 import sys
-current_folder = os.path.dirname(__file__) # ./backend_classification
+current_folder = os.path.dirname(__file__) # ./backend_classification  # mengubah biar lebih fleksibel
 sys.path.append(current_folder)
 from FeatureExtractor_GLCM import GLCMFeatureExtractor
 warnings.filterwarnings("ignore")
@@ -25,11 +25,11 @@ class ImageClassifier:
         self.feature_type = feature_type
         self.data = []
         self.labels = []
-        self.feature_extractors = {
-            "histogram": self.extract_histogram,
+        self.feature_extractors = {     #feature extractor untuk mereduksi data
+            "histogram": self.extract_histogram, 
             "glcm": self.extract_glcm
         }
-        self.classifiers = {
+        self.classifiers = {        #klasifikasinya
             "mlp": self.train_mlp,
             "naive_bayes": self.train_naive_bayes
         }
@@ -55,7 +55,7 @@ class ImageClassifier:
                 for file in os.listdir(folder_path):
                     file_path = os.path.join(folder_path, file)
                     
-                    if file.endswith('.jpg'):
+                    if file.endswith('.jpg') or file.endswith('.png') or file.endswith('.jpeg'):
                         image = cv2.imread(file_path)
                         features = self.feature_extractors[self.feature_type](image)
 
@@ -76,7 +76,7 @@ class ImageClassifier:
         return nb
         
     def train_classifier(self, classifier_type):
-        X_train, X_test, y_train, y_test = train_test_split(self.data, self.labels, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(self.data, self.labels, test_size=0.2, random_state=42) #train split
 
         classifier = self.classifiers[classifier_type]()
         classifier.fit(X_train.reshape(len(X_train), -1), y_train)
@@ -113,8 +113,8 @@ class ImageClassifier:
 
 if __name__ == "__main__":
     DATASET_DIR = os.path.join(current_folder, 'dataset/Car_lite')
-    MODEL_DIR = os.path.join(current_folder, 'model')
-    FEATURE_DIR = os.path.join(current_folder, 'fitur')
+    MODEL_DIR = os.path.join(current_folder, 'model') #model klasifikasi
+    FEATURE_DIR = os.path.join(current_folder, 'fitur') 
     FEATURE_TYPE = 'histogram'  # choose from 'histogram', 'glcm', or 'histogram_glcm'
     CLASSIFIER_TYPE = "mlp" # "mlp", "naive_bayes"
 

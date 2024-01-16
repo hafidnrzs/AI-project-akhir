@@ -83,7 +83,7 @@ class _ImageUploaderState extends State<ImageUploader> {
         isUploading = true;
       });
 
-      final uri = Uri.parse("http://192.168.1.9:5000/upload");
+      final uri = Uri.parse("http://192.168.1.15:5000/upload");
       var request = http.MultipartRequest('POST', uri);
       request.files
           .add(await http.MultipartFile.fromPath('image', _image!.path));
@@ -186,7 +186,7 @@ class _ImageUploaderState extends State<ImageUploader> {
             child: Positioned(
               bottom: 0,
               child: Container(
-                height: 150,
+                height: 120,
                 padding: const EdgeInsets.only(top: 24),
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
@@ -196,15 +196,18 @@ class _ImageUploaderState extends State<ImageUploader> {
                       topRight: Radius.circular(24),
                     )),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text(
                       'Hasil klasifikasi',
                       style: TextStyle(fontSize: 16.0, color: Colors.white),
                     ),
+                    const SizedBox(height: 8),
                     Text(
                       responseMessage,
                       style:
-                          const TextStyle(fontSize: 32.0, color: Colors.white),
+                          const TextStyle(fontSize: 22.0, color: Colors.white),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
