@@ -8,6 +8,9 @@ from sklearn.metrics import classification_report
 import pickle
 import warnings
 from sklearn.model_selection import cross_val_score
+from skimage.feature import hog
+from skimage import exposure
+
 
 
 
@@ -27,7 +30,8 @@ class ImageClassifier:
         self.labels = []
         self.feature_extractors = {     #feature extractor untuk mereduksi data
             "histogram": self.extract_histogram, 
-            "glcm": self.extract_glcm
+            "glcm": self.extract_glcm,
+            "hog": self.extract_hog
         }
         self.classifiers = {        #klasifikasinya
             "mlp": self.train_mlp,
@@ -46,6 +50,22 @@ class ImageClassifier:
         feature_extractor = GLCMFeatureExtractor()
         glcm_features = feature_extractor.compute_glcm_features(image)
         return glcm_features
+    
+    def extract_hog(self, image):
+        # Konversi gambar ke ruang warna Grayscale
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        # Hitung fitur HOG
+        features, hog_image = hog(gray_image, orientations=8, pixels_per_cell=(8, 8),
+                                cells_per_block=(1, 1), visualize=True)
+
+        # Normalisasi fitur HOG
+        features = exposure.rescale_intensity(features, in_range=(0, 10))
+
+        # Reshape untuk mendapatkan array satu dimensi
+        features = features.reshape(1, -1)
+
+        return features
 
     def load_data(self):
         for folder in os.listdir(self.dataset_dir):
@@ -115,7 +135,7 @@ if __name__ == "__main__":
     DATASET_DIR = os.path.join(current_folder, 'dataset/Car_lite')
     MODEL_DIR = os.path.join(current_folder, 'model') #model klasifikasi
     FEATURE_DIR = os.path.join(current_folder, 'fitur') 
-    FEATURE_TYPE = 'histogram'  # choose from 'histogram', 'glcm', or 'histogram_glcm'
+    FEATURE_TYPE = 'hog'  # choose from 'histogram', 'glcm', or 'hog'
     CLASSIFIER_TYPE = "mlp" # "mlp", "naive_bayes"
 
     # Create an instance of ImageClassifier and train the chosen classifier
