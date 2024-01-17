@@ -33,6 +33,8 @@ class ImageClassifierTester:
         feature_extractor = GLCMFeatureExtractor()
         glcm_features = feature_extractor.compute_glcm_features(image)
         return glcm_features
+    
+
 
     def load_data(self):
         self.data = np.load(os.path.join(self.feature_dir, 'data.npy'))
