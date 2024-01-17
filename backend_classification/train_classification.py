@@ -52,20 +52,27 @@ class ImageClassifier:
         return glcm_features
     
     def extract_hog(self, image):
-        # Konversi gambar ke ruang warna Grayscale
-        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # Resize gambar ke ukuran yang diinginkan
+        resized_image = cv2.resize(image, (64, 64))  # Ganti target_width dan target_height sesuai kebutuhan
 
-        # Hitung fitur HOG
-        features, hog_image = hog(gray_image, orientations=8, pixels_per_cell=(8, 8),
-                                cells_per_block=(1, 1), visualize=True)
+        # Hitung fitur HOG untuk setiap saluran warna
+        hog_features = []
+        for channel in range(resized_image.shape[2]):
+            features, _ = hog(resized_image[:, :, channel], orientations=8, pixels_per_cell=(8, 8),
+                            cells_per_block=(1, 1), visualize=True)
 
-        # Normalisasi fitur HOG
-        features = exposure.rescale_intensity(features, in_range=(0, 10))
+            # Normalisasi fitur HOG
+            features = exposure.rescale_intensity(features, in_range=(0, 10))
 
-        # Reshape untuk mendapatkan array satu dimensi
-        features = features.reshape(1, -1)
+            # Flatten dan reshape untuk mendapatkan array satu dimensi
+            features = features.flatten()
 
-        return features
+            hog_features.extend(features)
+
+        # Konversi hasilnya menjadi array satu dimensi
+        hog_features = np.array(hog_features).reshape(1, -1)
+
+        return hog_features
 
     def load_data(self):
         for folder in os.listdir(self.dataset_dir):
@@ -135,7 +142,7 @@ if __name__ == "__main__":
     DATASET_DIR = os.path.join(current_folder, 'dataset/Car_lite')
     MODEL_DIR = os.path.join(current_folder, 'model') #model klasifikasi
     FEATURE_DIR = os.path.join(current_folder, 'fitur') 
-    FEATURE_TYPE = 'hog'  # choose from 'histogram', 'glcm', or 'hog'
+    FEATURE_TYPE = 'histogram'  # choose from 'histogram', 'glcm', or 'hog'
     CLASSIFIER_TYPE = "mlp" # "mlp", "naive_bayes"
 
     # Create an instance of ImageClassifier and train the chosen classifier
